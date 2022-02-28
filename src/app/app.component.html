@@ -1,0 +1,79 @@
+<div class="app-flex-row">
+  <div style="width: 300px; margin-top: 76.56px">
+    <p-listbox [options]="groupedAvailableItems"
+               [group]="true"
+               [ngModel]="selectedEntry"
+               [listStyle]="{'max-height':getAvailableHeight()}"
+               (ngModelChange)="setSelectedChat($event)">
+      <ng-template pTemplate="header">
+        Available Channels
+      </ng-template>
+    </p-listbox>
+  </div>
+  <div style="width: 100%">
+    <p-table [value]="selectedEntries"
+             #dt
+             [scrollable]="true"
+             [globalFilterFields]="globalFilterFields"
+             [scrollHeight]="getAvailableHeight()"
+             [style]="{width: '100%'}">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between app-flex-row">
+          <p-fileUpload name="myfile[]"
+                        mode="basic"
+                        chooseLabel="Select Logfile"
+                        [auto]="true"
+                        [customUpload]="true" (uploadHandler)="myUploader($event)"></p-fileUpload>
+          <input pInputText style="margin-left: auto; width: 400px"
+                 type="text"
+                 (input)="filterGlobal(dt, $event)"
+                 placeholder="Search Selected Chats" />
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="max-width: 220px" pSortableColumn="timestamp">
+            Timestamp
+            <p-sortIcon field="timestamp"></p-sortIcon>
+          </th>
+          <th style="max-width: 150px">Channel</th>
+          <th style="max-width: 250px">
+            <div class="flex justify-content-center align-items-center">
+              Character
+            </div>
+          </th>
+          <th>Message</th>
+        </tr>
+        <tr>
+          <th style="max-width: 220px">
+            <p-columnFilter type="date" field="timestamp" display="menu" >
+              <ng-template pTemplate="filter" let-value  let-filter="filterCallback">
+                <p-calendar [ngModel]="value" (onSelect)="filter($event)" [showTime]="true"></p-calendar>
+              </ng-template>
+            </p-columnFilter>
+          </th>
+          <th style="max-width: 150px"></th>
+          <th style="max-width: 250px">
+            <p-columnFilter type="text" field="sendingPlayer"></p-columnFilter>
+          </th>
+          <th>
+            <p-columnFilter type="text" field="chatMessage"></p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-msg>
+        <tr>
+          <td style="max-width: 220px;">{{msg.timestamp.toLocaleString()}}</td>
+          <td style="max-width: 150px;">{{msg.type}}</td>
+          <td style="max-width: 250px;">{{msg.sendingPlayer}}</td>
+          <td>{{msg.chatMessage}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="flex align-items-center justify-content-between">
+          In total there are {{selectedEntries ? selectedEntries.length : 0 }} log entries.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
